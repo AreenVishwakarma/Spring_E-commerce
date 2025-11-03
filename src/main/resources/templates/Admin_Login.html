@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Admin Login</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="min-h-screen bg-neutral-50 text-neutral-900 antialiased" style="font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;">
+    <div class="mx-auto max-w-md px-4 sm:px-6 py-12">
+      <div class="mb-8 text-center">
+        <div class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-neutral-900 text-white">IC</div>
+        <h1 class="text-2xl font-semibold tracking-tight">Admin Login</h1>
+        <p class="mt-1 text-sm text-neutral-600">Sign in to manage products and orders.</p>
+      </div>
+
+      <form th:action="@{/catalog/admin/login}" method="post" class="rounded-2xl bg-white border border-neutral-200 shadow-sm p-6 space-y-4">
+        <div th:if="${error}" class="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700" th:text="${error}">Invalid credentials</div>
+
+        <label class="block">
+          <span class="mb-1 block text-sm text-neutral-700">Email</span>
+          <input name="email" type="email" required placeholder="you@example.com" class="w-full rounded-lg border border-neutral-200 bg-white px-3 py-2.5 text-sm text-neutral-900 placeholder:text-neutral-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500" />
+        </label>
+
+        <label class="block">
+          <span class="mb-1 block text-sm text-neutral-700">Password</span>
+          <input name="password" type="password" required placeholder="••••••••" class="w-full rounded-lg border border-neutral-200 bg-white px-3 py-2.5 text-sm text-neutral-900 placeholder:text-neutral-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500" />
+        </label>
+
+        <button type="submit" class="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-neutral-900 text-white px-4 py-2.5 text-sm font-medium shadow-sm hover:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-neutral-900/30">Sign in</button>
+      </form>
+
+      <div class="mt-6 text-center">
+        <a th:href="@{/catalog/list}" class="text-sm text-neutral-600 hover:text-neutral-900">Back to catalog</a>
+      </div>
+    </div>
+  </body>
+  </html>
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>Ice Cream Co. — Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+  </head>
+  <body class="min-h-screen bg-neutral-50 text-neutral-900 antialiased selection:bg-indigo-200/50 selection:text-indigo-900" style="font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;">
+    <!-- Top bar -->
+
+    <!-- Login Page (new) -->
+
+    <!-- Catalog Page -->
+
+    <!-- Orders Page -->
+
+    <!-- Order Confirmation Page (updated to show details) -->
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        if (window.lucide && lucide.createIcons) {
+          lucide.createIcons({ attrs: { 'stroke-width': 1.5 }});
+        }
+
+        // Auth helpers
+        const isAuthed = () => localStorage.getItem('adminAuthed') === '1';
+        const setAuthed = (v) => {
+          try { localStorage.setItem('adminAuthed', v ? '1' : '0'); } catch {}
+        };
+
+        // Elements
+        const loginPage = document.getElementById('loginPage');
+        const catalogPage = document.getElementById('catalogPage');
+        const ordersPage = document.getElementById('ordersPage');
+        const orderPage = document.getElementById('orderPage');
+
+        const signInBtn = document.getElementById('signInBtn');
+        const loginEmail = document.getElementById('loginEmail');
+        const loginPassword = document.getElementById('loginPassword');
+        const loginEmailError = document.getElementById('loginEmailError');
+        const loginPasswordError = document.getElementById('loginPasswordError');
+        const togglePassword = document.getElementById('togglePassword');
+
+        const placeOrderBtn = document.getElementById('placeOrderBtn');
+        const openOrdersBtn = document.getElementById('openOrdersBtn');
+        const ordersCountBadge = document.getElementById('ordersCountBadge');
+        const productsCountBadge = document.getElementById('productsCountBadge');
+        const ordersListEl = document.getElementById('ordersList');
+        const ordersSummaryEl = document.getElementById('ordersSummary');
+        const backToCatalogFromOrders = document.getElementById('backToCatalogFromOrders');
+        const backToCatalogBtn = document.getElementById('backToCatalogBtn');
+        const viewAllOrdersBtn = document.getElementById('viewAllOrdersBtn');
+        const newOrderBtn = document.getElementById('newOrderBtn');
+        const logoHome = document.getElementById('logoHome');
+
+        // Order page detail elements
+        const orderIdEl = document.getElementById('orderId');
+        const orderPlacedAtEl = document.getElementById('orderPlacedAt');
+        const orderTotalEl = document.getElementById('orderTotal');
+        const orderItemsListEl = document.getElementById('orderItemsList');
+
+        function showPage(page) {
+          const pages = [loginPage, catalogPage, ordersPage, orderPage];
+          pages.forEach(p => p.classList.add('hidden'));
+          page.classList.remove('hidden');
+          if (window.lucide && lucide.createIcons) {
+            lucide.createIcons({ attrs: { 'stroke-width': 1.5 }});
+          }
+        }
+
+        function ensureAuthOrRedirect() {
+          if (!isAuthed()) {
+            showPage(loginPage);
+            return false;
+          }
+          return true;
+        }
+
+        function readSavedProducts() {
+          const raw = localStorage.getItem('savedProducts') || localStorage.getItem('products') || '[]';
+          try {
+            const parsed = JSON.parse(raw);
+            return Array.isArray(parsed) ? parsed : [];
+          } catch {
+            return [];
+          }
+        }
+
+        function setSavedProducts(arr) {
+          try {
+            localStorage.setItem('savedProducts', JSON.stringify(arr || []));
+          } catch {}
+        }
+
+        function getOrders() {
+          const raw = localStorage.getItem('orders') || '[]';
+          try {
+            const parsed = JSON.parse(raw);
+            return Array.isArray(parsed) ? parsed : [];
+          } catch {
+            return [];
+          }
+        }
+
+        function setOrders(arr) {
+          try {
+            localStorage.setItem('orders', JSON.stringify(arr || []));
+          } catch {}
+        }
+
+        function currency(n) {
+          const num = typeof n === 'number' ? n : parseFloat(n || 0);
+          return isNaN(num) ? '$0.00' : num.toLocaleString(undefined, { style: 'currency', currency: 'USD' });
+        }
+
+        function updateBadges() {
+          const products = readSavedProducts();
+          if (productsCountBadge) productsCountBadge.textContent = products.length || 0;
+
+          const orders = getOrders();
+          if (ordersCountBadge) ordersCountBadge.textContent = orders.length || 0;
+        }
+
+        function buildOrderHTML({ id, createdAt, items, subtotal }) {
+          const itemsHTML = items.length
+            ? items.map((it, idx) => {
+                const name = String(it.name || it.title || `Item ${idx + 1}`);
+                const price = typeof it.price !== 'undefined' ? it.price : it.amount || 0;
+                return `
+                  <div class="flex items-center justify-between gap-4 py-3 border-b border-neutral-200">
+                    <div class="min-w-0">
+                      <div class="text-sm font-medium truncate">${name}</div>
+                      ${it.unum ? `<div class="text-xs text-neutral-500">#${String(it.unum)}</div>` : ''}
+                    </div>
+                    <div class="text-sm font-semibold whitespace-nowrap">${currency(price)}</div>
+                  </div>
+                `;
+              }).join('')
+            : `
+              <div class="rounded-xl border border-dashed border-neutral-200 p-8 text-center text-neutral-600">
+                <i data-lucide="package-open" class="mx-auto mb-2 text-neutral-400"></i>
+                <p class="text-sm">No items were found for this order.</p>
+              </div>
+            `;
+
+          return `
+    <script>
+      if (window.lucide && lucide.createIcons) {
+        lucide.createIcons({ attrs: { 'stroke-width': 1.5 }});
+      }
+          `;
+        }
+
+        function renderOrdersList() {
+          const orders = getOrders().slice().reverse(); // latest first
+          const count = orders.length;
+          if (ordersSummaryEl) {
+            ordersSummaryEl.textContent = count ? count + (count === 1 ? ' order' : ' orders') : '';
+          }
+
+          if (!ordersListEl) return;
+
+          if (!count) {
+            ordersListEl.innerHTML = `
+              <div class="flex flex-col items-center justify-center text-center rounded-xl border border-dashed border-neutral-200 p-10">
+                <i data-lucide="inbox" class="mb-2 text-neutral-400"></i>
+                <p class="text-sm text-neutral-600">No orders yet. Place an order to see it here.</p>
+              </div>
+            `;
+            if (window.lucide && lucide.createIcons) lucide.createIcons({ attrs: { 'stroke-width': 1.5 }});
+            return;
+          }
+
+          ordersListEl.innerHTML = orders.map(o => {
+            const itemsCount = (o.items || []).length;
+            return `
+              <div class="flex items-center justify-between rounded-xl border border-neutral-200 bg-white p-4 shadow-sm">
+                <div class="flex items-center gap-3 min-w-0">
+                  <div class="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-neutral-50 ring-1 ring-neutral-200">
+                    <i data-lucide="file-text"></i>
+                  </div>
+                  <div class="min-w-0">
+                    <div class="text-sm font-semibold tracking-tight truncate">${o.id}</div>
+                    <div class="text-xs text-neutral-600 truncate">${o.createdAt}</div>
+                  </div>
+                </div>
+                <div class="flex items-center gap-4">
+                  <div class="text-xs text-neutral-600">${itemsCount} ${itemsCount === 1 ? 'item' : 'items'}</div>
+                  <div class="text-sm font-semibold whitespace-nowrap">${currency(o.subtotal || 0)}</div>
+                  <button data-view-order="${o.id}" class="inline-flex items-center gap-1.5 rounded-lg border border-neutral-200 bg-white px-2.5 py-1.5 text-xs font-medium text-neutral-700 shadow-sm hover:bg-neutral-50 hover:border-neutral-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/40">
+                    <i data-lucide="eye"></i>
+                    View
+                  </button>
+                </div>
+              </div>
+            `;
+          }).join('');
+
+          if (window.lucide && lucide.createIcons) {
+            lucide.createIcons({ attrs: { 'stroke-width': 1.5 }});
+          }
+        }
+
+        function renderOrderPlaced(order) {
+          if (!order) return;
+          if (orderIdEl) orderIdEl.textContent = order.id || '—';
+          if (orderPlacedAtEl) orderPlacedAtEl.textContent = order.createdAt || '—';
+          if (orderTotalEl) orderTotalEl.textContent = currency(order.subtotal || 0);
+
+          if (orderItemsListEl) {
+            const items = order.items || [];
+            orderItemsListEl.innerHTML = items.length
+              ? items.map((it, idx) => {
+                  const name = String(it.name || it.title || `Item ${idx + 1}`);
+                  const price = typeof it.price !== 'undefined' ? it.price : it.amount || 0;
+                  const unum = it.unum ? String(it.unum) : '';
+                  return `
+                    <div class="flex items-center justify-between gap-4 py-3 border-b border-neutral-200">
+                      <div class="min-w-0">
+                        <div class="text-sm font-medium truncate">${name}</div>
+                        ${unum ? `<div class="text-xs text-neutral-500">#${unum}</div>` : ''}
+                      </div>
+                      <div class="text-sm font-semibold whitespace-nowrap">${currency(price)}</div>
+                    </div>
+                  `;
+                }).join('')
+              : `
+                <div class="rounded-xl border border-dashed border-neutral-200 p-8 text-center text-neutral-600">
+                  <i data-lucide="package-open" class="mx-auto mb-2 text-neutral-400"></i>
+                  <p class="text-sm">No items were found for this order.</p>
+                </div>
+              `;
+          }
+
+          if (window.lucide && lucide.createIcons) {
+            lucide.createIcons({ attrs: { 'stroke-width': 1.5 }});
+          }
+        }
+
+        function placeOrder() {
+          if (!ensureAuthOrRedirect()) return;
+
+          const items = readSavedProducts().map(p => ({
+            name: p.name || p.title || 'Untitled item',
+            price: typeof p.price !== 'undefined' ? p.price : p.amount || 0,
+            unum: p.unum
+          }));
+          const subtotal = items.reduce((sum, it) => {
+            const val = parseFloat(it.price || 0);
+            return sum + (isNaN(val) ? 0 : val);
+          }, 0);
+          const id = 'ORD-' + String(Date.now()).slice(-8);
+          const createdAt = new Date().toLocaleString();
+
+          const orders = getOrders();
+          const order = { id, createdAt, items, subtotal };
+          orders.push(order);
+          setOrders(orders);
+          updateBadges();
+
+          renderOrderPlaced(order);
+          showPage(orderPage);
+        }
+
+        // Login behavior
+        function validateEmail(val) {
+          return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(val || '').trim());
+        }
+
+        function attemptSignIn() {
+          const email = (loginEmail && loginEmail.value || '').trim();
+          const pwd = (loginPassword && loginPassword.value || '').trim();
+
+          let ok = true;
+
+          if (loginEmailError) loginEmailError.classList.add('hidden');
+          if (loginPasswordError) loginPasswordError.classList.add('hidden');
+
+          if (!validateEmail(email)) {
+            ok = false;
+            if (loginEmailError) loginEmailError.classList.remove('hidden');
+          }
+          if ((pwd || '').length < 6) {
+            ok = false;
+            if (loginPasswordError) loginPasswordError.classList.remove('hidden');
+          }
+
+          if (!ok) return;
+
+          setAuthed(true);
+          showPage(catalogPage);
+        }
+
+        if (signInBtn) {
+          signInBtn.addEventListener('click', attemptSignIn);
+        }
+        if (loginPassword) {
+          loginPassword.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') attemptSignIn();
+          });
+        }
+        if (loginEmail) {
+          loginEmail.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') attemptSignIn();
+          });
+        }
+        if (togglePassword && loginPassword) {
+          togglePassword.addEventListener('click', () => {
+            const type = loginPassword.getAttribute('type') === 'password' ? 'text' : 'password';
+            loginPassword.setAttribute('type', type);
+            if (window.lucide && lucide.createIcons) {
+              togglePassword.innerHTML = `<i data-lucide="${type === 'password' ? 'eye' : 'eye-off'}"></i>`;
+              lucide.createIcons({ attrs: { 'stroke-width': 1.5 }});
+            }
+          });
+        }
+
+        // Events
+        if (placeOrderBtn) {
+          placeOrderBtn.addEventListener('click', placeOrder);
+        }
+
+        if (openOrdersBtn) {
+          openOrdersBtn.addEventListener('click', () => {
+            if (!ensureAuthOrRedirect()) return;
+            renderOrdersList();
+            showPage(ordersPage);
+          });
+        }
+
+        if (backToCatalogFromOrders) {
+          backToCatalogFromOrders.addEventListener('click', () => {
+            if (!ensureAuthOrRedirect()) return;
+            showPage(catalogPage);
+          });
+        }
+
+        if (backToCatalogBtn) {
+          backToCatalogBtn.addEventListener('click', () => {
+            if (!ensureAuthOrRedirect()) return;
+            showPage(catalogPage);
+          });
+        }
+
+        if (viewAllOrdersBtn) {
+          viewAllOrdersBtn.addEventListener('click', () => {
+            if (!ensureAuthOrRedirect()) return;
+            renderOrdersList();
+            showPage(ordersPage);
+          });
+        }
+
+        if (newOrderBtn) {
+          newOrderBtn.addEventListener('click', () => {
+            if (!ensureAuthOrRedirect()) return;
+            showPage(catalogPage);
+          });
+        }
+
+        if (logoHome) {
+          logoHome.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (!isAuthed()) {
+              showPage(loginPage);
+              return;
+            }
+            showPage(catalogPage);
+          });
+        }
+
+        if (ordersListEl) {
+          ordersListEl.addEventListener('click', (e) => {
+            if (!ensureAuthOrRedirect()) return;
+            const btn = e.target.closest('button[data-view-order]');
+            if (!btn) return;
+            const id = btn.getAttribute('data-view-order');
+            const orders = getOrders();
+            const found = orders.find(o => o.id === id);
+            if (found) {
+              const html = buildOrderHTML(found);
+              const w = window.open('', '_blank', 'noopener,noreferrer');
+              if (w) {
+                w.document.open();
+                w.document.write(html);
+                w.document.close();
+              }
+            }
+          });
+        }
+
+        // Initial page
+        if (isAuthed()) {
+          showPage(catalogPage);
+        } else {
+          showPage(loginPage);
+        }
+
+        // Initial badges
+        updateBadges();
+      });
+    </script>
+  </body>
+</html>

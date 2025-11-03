@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Order Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+  </head>
+  <body class="min-h-screen bg-neutral-50 text-neutral-900 antialiased" style="font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;">
+    <div class="w-full border-b border-neutral-200 bg-white/70 backdrop-blur">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6">
+        <div class="flex h-14 items-center justify-between">
+          <a th:href="@{/catalog/list}" class="flex items-center gap-2 group">
+            <div class="flex h-8 w-8 items-center justify-center rounded-md bg-neutral-900 text-white ring-1 ring-neutral-900/10 shadow-sm">
+              <span class="text-sm font-semibold tracking-tight">IC</span>
+            </div>
+            <div class="hidden sm:block">
+              <span class="text-base font-semibold tracking-tight">Ice Cream Co.</span>
+            </div>
+          </a>
+          <div class="flex items-center gap-2">
+            <a th:href="@{/catalog/list}" class="inline-flex items-center gap-2 rounded-lg bg-neutral-900 text-white px-3 py-2 text-sm font-medium shadow-sm hover:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-neutral-900/30">
+              <i data-lucide="plus"></i>
+              New order
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <main class="mx-auto max-w-3xl px-4 sm:px-6 py-10">
+      <div th:if="${order == null}" class="rounded-xl border border-dashed border-neutral-200 p-10 text-center text-neutral-600">
+        <i data-lucide="package-open" class="mx-auto mb-2 text-neutral-400"></i>
+        <div class="text-sm">No order to display. Place an order to see details here.</div>
+      </div>
+
+      <div th:if="${order != null}">
+        <div class="flex items-start gap-3">
+          <div class="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-50 ring-1 ring-emerald-200">
+            <i data-lucide="check-circle-2" class="text-emerald-600"></i>
+          </div>
+          <div>
+            <h1 class="text-3xl sm:text-4xl font-semibold tracking-tight">Order placed</h1>
+            <p class="mt-2 text-sm sm:text-base text-neutral-600">Thank you. Your order has been placed successfully.</p>
+          </div>
+        </div>
+
+        <div class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-3">
+          <div class="rounded-2xl bg-white border border-neutral-200 shadow-sm p-5 sm:p-6">
+            <div class="text-xs text-neutral-500">Order</div>
+            <div class="mt-1 text-sm font-semibold" th:text="${order.orderID}">—</div>
+          </div>
+          <div class="rounded-2xl bg-white border border-neutral-200 shadow-sm p-5 sm:p-6">
+            <div class="text-xs text-neutral-500">Placed</div>
+            <div class="mt-1 text-sm font-semibold" th:text="${order.orderDate}">—</div>
+          </div>
+          <div class="rounded-2xl bg-white border border-neutral-200 shadow-sm p-5 sm:p-6">
+            <div class="text-xs text-neutral-500">Total</div>
+            <div class="mt-1 text-sm font-semibold" th:text="${order.totalPrice}">—</div>
+          </div>
+        </div>
+
+        <section class="mt-6 rounded-2xl bg-white border border-neutral-200 shadow-sm">
+          <div class="p-5 sm:p-6 border-b border-neutral-200">
+            <div class="flex items-center gap-2">
+              <i data-lucide="receipt"></i>
+              <h2 class="text-lg font-semibold tracking-tight">Order summary</h2>
+            </div>
+          </div>
+          <div class="p-5 sm:p-6 space-y-0">
+            <div th:if="${#lists.isEmpty(orderItems)}" class="rounded-xl border border-dashed border-neutral-200 p-8 text-center text-neutral-600">
+              <i data-lucide="package-open" class="mx-auto mb-2 text-neutral-400"></i>
+              <p class="text-sm">No items were found for this order.</p>
+            </div>
+            <div th:each="it : ${orderItems}" class="flex items-center justify-between gap-4 py-3 border-b border-neutral-200">
+              <div class="min-w-0">
+                <div class="text-sm font-medium truncate" th:text="${it.productName}">Item</div>
+              </div>
+              <div class="text-sm font-semibold whitespace-nowrap" th:text="${'× ' + it.qty}">× 1</div>
+            </div>
+          </div>
+        </section>
+
+        <div class="mt-6 flex items-center gap-3">
+          <a th:href="@{/catalog/list}" class="inline-flex items-center gap-2 rounded-lg bg-neutral-900 text-white px-3 py-2 text-sm font-medium shadow-sm hover:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-neutral-900/30">
+            <i data-lucide="house
+               "></i>
+            Home
+          </a>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        if (window.lucide && lucide.createIcons) {
+          lucide.createIcons({ attrs: { 'stroke-width': 1.5 }});
+        }
+      });
+    </script>
+  </body>
+</html>
+
+

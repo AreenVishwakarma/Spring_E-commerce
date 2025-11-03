@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Payment Failed</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+  </head>
+  <body class="min-h-screen bg-neutral-50 text-neutral-900 antialiased" style="font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;">
+    <div class="w-full border-b border-neutral-200 bg-white/70 backdrop-blur">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6">
+        <div class="flex h-14 items-center justify-between">
+          <a th:href="@{/catalog/list}" class="flex items-center gap-2 group">
+            <div class="flex h-8 w-8 items-center justify-center rounded-md bg-neutral-900 text-white ring-1 ring-neutral-900/10 shadow-sm">
+              <span class="text-sm font-semibold tracking-tight">IC</span>
+            </div>
+            <div class="hidden sm:block">
+              <span class="text-base font-semibold tracking-tight">Ice Cream Co.</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <main class="mx-auto max-w-2xl px-4 sm:px-6 py-12">
+      <div class="text-center mb-8">
+        <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-50 ring-1 ring-red-200">
+          <i data-lucide="x-circle" class="h-8 w-8 text-red-600"></i>
+        </div>
+        <h1 class="text-2xl font-semibold tracking-tight">Payment Failed</h1>
+        <p class="mt-2 text-sm text-neutral-600">We couldn't process your payment. Please try again.</p>
+      </div>
+
+      <div class="rounded-2xl bg-white border border-neutral-200 shadow-sm p-6 mb-6">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-lg font-semibold">Order Details</h2>
+          <span class="text-sm text-neutral-600" th:text="${order.orderID}">Order ID</span>
+        </div>
+        
+        <div class="space-y-3">
+          <div th:each="item : ${orderItems}" class="flex items-center justify-between py-2 border-b border-neutral-100">
+            <div class="flex items-center gap-3">
+              <div class="h-8 w-8 rounded-lg bg-neutral-100 flex items-center justify-center">
+                <i data-lucide="ice-cream" class="h-4 w-4 text-neutral-600"></i>
+              </div>
+              <div>
+                <div class="text-sm font-medium" th:text="${item.productName}">Product Name</div>
+                <div class="text-xs text-neutral-600" th:text="'Qty: ' + ${item.qty}">Qty: 1</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="pt-3 border-t border-neutral-200">
+            <div class="flex items-center justify-between text-lg font-semibold">
+              <span>Total Amount</span>
+              <span th:text="${order.totalPrice != null ? #numbers.formatDecimal(order.totalPrice, 1, 'COMMA', 2, 'POINT') : '0.00'}">₹0.00</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="rounded-2xl bg-red-50 border border-red-200 p-6 mb-6">
+        <div class="flex items-start gap-3">
+          <i data-lucide="alert-triangle" class="h-5 w-5 text-red-600 mt-0.5"></i>
+          <div>
+            <h3 class="text-sm font-semibold text-red-900">Payment Issue</h3>
+            <p class="mt-1 text-sm text-red-700">Your payment could not be processed. This might be due to insufficient funds, incorrect card details, or network issues. Please check your payment information and try again.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-col sm:flex-row gap-3">
+        <form th:action="@{/payment/retry/{orderId}(orderId=${order.orderID})}" method="post" class="flex-1">
+          <button type="submit" class="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 text-white px-4 py-2.5 text-sm font-medium shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500/30">
+            <i data-lucide="refresh-cw"></i>
+            Retry Payment
+          </button>
+        </form>
+        <a th:href="@{/catalog/list}" class="flex-1 inline-flex items-center justify-center gap-2 rounded-lg border border-neutral-200 bg-white px-4 py-2.5 text-sm font-medium text-neutral-700 shadow-sm hover:bg-neutral-50 hover:border-neutral-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/40">
+          <i data-lucide="shopping-bag"></i>
+          Continue Shopping
+        </a>
+      </div>
+
+      <div class="mt-6 text-center">
+        <p class="text-xs text-neutral-500">
+          Need help? <a href="#" class="text-blue-600 hover:text-blue-700">Contact our support team</a>
+        </p>
+      </div>
+    </main>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        if (window.lucide) {
+          lucide.createIcons({ attrs: { 'stroke-width': 1.5 } });
+        }
+      });
+    </script>
+  </body>
+</html>

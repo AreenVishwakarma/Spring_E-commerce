@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>Ice Cream Co. — Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+  </head>
+  <body class="min-h-screen bg-neutral-50 text-neutral-900 antialiased selection:bg-indigo-200/50 selection:text-indigo-900" style="font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;">
+    <!-- Top bar -->
+    <div class="w-full border-b border-neutral-200 bg-white/70 backdrop-blur">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6">
+        <div class="flex h-14 items-center justify-between">
+          <!-- Logo -->
+          <a th:href="@{/catalog/list}" class="flex items-center gap-2 group">
+            <div class="flex h-8 w-8 items-center justify-center rounded-md bg-neutral-900 text-white ring-1 ring-neutral-900/10 shadow-sm">
+              <span class="text-sm font-semibold tracking-tight">IC</span>
+            </div>
+            <div class="hidden sm:block">
+              <span class="text-base font-semibold tracking-tight">Ice Cream Co.</span>
+            </div>
+          </a>
+          <!-- Spacer -->
+          <div class="flex-1 px-4"></div>
+          <!-- Actions -->
+<!--          <div class="flex items-center gap-2">
+            <a id="openProductsBtn" href="#savedProducts" class="relative inline-flex items-center gap-2 rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm font-medium text-neutral-700 shadow-sm hover:bg-neutral-50 hover:border-neutral-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/40">
+              <i data-lucide="package"></i>
+              <span class="hidden sm:inline">Products</span>
+              <span id="productsCountBadge" class="absolute -right-2 -top-2 inline-flex h-5 min-w-[20px] items-center justify-center rounded-full bg-neutral-900 px-1.5 text-[11px] font-semibold leading-none text-white ring-2 ring-white">0</span>
+            </a>
+          </div>-->
+        </div>
+      </div>
+    </div>
+
+    <!-- Page header -->
+    <header class="mx-auto max-w-7xl px-4 sm:px-6 pt-8 sm:pt-10">
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h1 class="text-3xl sm:text-4xl font-semibold tracking-tight">Add new product</h1>
+          <p class="mt-2 text-sm sm:text-base text-neutral-600">Create items for your catalog. All fields can be edited later.</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <a th:href="@{/catalog/orders}" class="inline-flex items-center gap-2 rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm font-medium text-neutral-700 shadow-sm hover:bg-neutral-50 hover:border-neutral-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/40">
+            <i data-lucide="arrow-left"></i>
+            Order Details
+          </a>
+        </div>
+      </div>
+      <div class="mt-6 border-t border-neutral-200"></div>
+    </header>
+
+    <!-- Main -->
+    <main class="mx-auto max-w-7xl px-4 sm:px-6 py-8">
+      <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
+        <!-- Left: Form -->
+        <div class="lg:col-span-3 space-y-6">
+          <!-- Product details -->
+          <section class="rounded-2xl bg-white border border-neutral-200 shadow-sm">
+            <div class="p-5 sm:p-6 border-b border-neutral-200">
+              <div class="flex items-center gap-2">
+                <i data-lucide="box" class="text-neutral-700"></i>
+                <h2 class="text-lg font-semibold tracking-tight">Product details</h2>
+              </div>
+            </div>
+            <form th:action="@{/catalog/save}" th:object="${product}" method="post" enctype="multipart/form-data" class="p-5 sm:p-6 space-y-4">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <label class="block">
+                  <span class="mb-1 block text-sm text-neutral-700">Unique number (unum)</span>
+                  <div class="relative">
+                    <i data-lucide="hash" class="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400"></i>
+                    <input th:field="*{unum}" type="text" placeholder="e.g. 1001" class="w-full rounded-lg border border-neutral-200 bg-white pl-10 pr-3 py-2.5 text-sm text-neutral-900 placeholder:text-neutral-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500" />
+                  </div>
+                  <p th:if="${#fields.hasErrors('unum')}" class="mt-1 text-xs text-red-600" th:errors="*{unum}">Enter a unique number.</p>
+                </label>
+                <label class="block">
+                  <span class="mb-1 block text-sm text-neutral-700">Name</span>
+                  <div class="relative">
+                    <i data-lucide="tag" class="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400"></i>
+                    <input th:field="*{name}" type="text" placeholder="Product name" class="w-full rounded-lg border border-neutral-200 bg-white pl-10 pr-3 py-2.5 text-sm text-neutral-900 placeholder:text-neutral-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500" />
+                  </div>
+                  <p th:if="${#fields.hasErrors('name')}" class="mt-1 text-xs text-red-600" th:errors="*{name}">Name is required.</p>
+                </label>
+              </div>
+
+              <label class="block">
+                <span class="mb-1 block text-sm text-neutral-700">Description</span>
+                <div class="relative">
+                  <i data-lucide="file-text" class="absolute left-3 top-3 text-neutral-400"></i>
+                  <textarea th:field="*{description}" rows="4" placeholder="Short description" class="w-full rounded-lg border border-neutral-200 bg-white pl-10 pr-3 py-2.5 text-sm text-neutral-900 placeholder:text-neutral-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500"></textarea>
+                </div>
+              </label>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <label class="block">
+                  <span class="mb-1 block text-sm text-neutral-700">Price</span>
+                  <div class="relative">
+                    <i data-lucide="indian-rupee" class="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400"></i>
+                    <input th:field="*{price}" type="number" step="0.01" min="0" placeholder="0.00" class="w-full rounded-lg border border-neutral-200 bg-white pl-10 pr-3 py-2.5 text-sm text-neutral-900 placeholder:text-neutral-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500" />
+                  </div>
+                  <p th:if="${#fields.hasErrors('price')}" class="mt-1 text-xs text-red-600" th:errors="*{price}">Enter a valid price.</p>
+                </label>
+
+                <div class="grid grid-cols-1 gap-3">
+                  <label class="block">
+                    <span class="mb-1 block text-sm text-neutral-700">Image URL (optional)</span>
+                    <div class="relative">
+                      <i data-lucide="link" class="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400"></i>
+                      <input th:field="*{image}" type="url" placeholder="https://..." class="w-full rounded-lg border border-neutral-200 bg-white pl-10 pr-3 py-2.5 text-sm text-neutral-900 placeholder:text-neutral-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500" />
+                    </div>
+                  </label>
+                  <label class="block">
+                    <span class="mb-1 block text-sm text-neutral-700">Or upload image</span>
+                    <input name="imageFile" type="file" accept="image/*" class="block w-full text-sm text-neutral-700 file:mr-3 file:rounded-md file:border file:border-neutral-200 file:bg-white file:px-3 file:py-2 file:text-sm file:font-medium hover:file:bg-neutral-50" />
+                  </label>
+                </div>
+              </div>
+
+              <!-- Display general error message -->
+              <div th:if="${error}" class="p-3 bg-red-50 border border-red-200 rounded-lg">
+                <p class="text-sm text-red-600" th:text="${error}"></p>
+              </div>
+
+              <!-- Display success message -->
+              <div th:if="${success}" class="p-3 bg-green-50 border border-green-200 rounded-lg">
+                <p class="text-sm text-green-600" th:text="${success}"></p>
+              </div>
+
+              <div class="flex items-center gap-3 pt-2">
+                <button type="submit" class="inline-flex items-center justify-center gap-2 rounded-lg bg-neutral-900 text-white px-4 py-2.5 text-sm font-medium shadow-sm hover:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-neutral-900/30">
+                  <i data-lucide="save"></i>
+                  Save product
+                </button>
+                <button type="reset" class="inline-flex items-center justify-center gap-2 rounded-lg border border-neutral-200 bg-white px-3 py-2.5 text-sm font-medium text-neutral-700 shadow-sm hover:bg-neutral-50 hover:border-neutral-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/40">
+                  <i data-lucide="rotate-ccw"></i>
+                  Reset
+                </button>
+              </div>
+            </form>
+          </section>
+        </div>
+
+        <!-- Right: Preview + Saved -->
+        <aside class="lg:col-span-2 space-y-6">
+          <!-- Preview -->
+          <section class="rounded-2xl bg-white border border-neutral-200 shadow-sm">
+            <div class="p-5 sm:p-6 border-b border-neutral-200">
+              <div class="flex items-center gap-2">
+                <i data-lucide="eye" class="text-neutral-700"></i>
+                <h2 class="text-lg font-semibold tracking-tight">Preview</h2>
+              </div>
+            </div>
+            <div class="p-5 sm:p-6">
+              <div class="rounded-xl border border-neutral-200 overflow-hidden shadow-sm">
+                <div class="relative h-40 w-full bg-neutral-100 ring-1 ring-neutral-200">
+                  <img id="previewImage" alt="Preview image" class="h-full w-full object-cover hidden" />
+                  <div id="previewImageFallback" class="absolute inset-0 flex items-center justify-center text-neutral-400">
+                    <i data-lucide="image-off"></i>
+                  </div>
+                </div>
+                <div class="p-4">
+                  <div class="flex items-start justify-between gap-3">
+                    <div class="min-w-0">
+                      <div id="previewName" class="text-sm font-semibold truncate">Product name</div>
+                      <div id="previewDesc" class="mt-1 text-xs text-neutral-600 line-clamp-2">A short description will appear here.</div>
+                    </div>
+                    <div id="previewPrice" class="text-sm font-semibold whitespace-nowrap">₹0.00</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Saved products -->
+<!--          <section id="savedProducts" class="rounded-2xl bg-white border border-neutral-200 shadow-sm">
+            <div class="p-5 sm:p-6 border-b border-neutral-200">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <i data-lucide="list" class="text-neutral-700"></i>
+                  <h2 class="text-lg font-semibold tracking-tight">Saved products</h2>
+                </div>
+                <span id="savedCount" class="text-sm text-neutral-600"></span>
+              </div>
+            </div>
+            <div id="productsList" class="p-5 sm:p-6 space-y-3 max-h-[360px] overflow-auto">
+              <div class="flex flex-col items-center justify-center text-center rounded-xl border border-dashed border-neutral-200 p-10">
+                <i data-lucide="package-open" class="mb-2 text-neutral-400"></i>
+                <p class="text-sm text-neutral-600">No products yet. Add your first product.</p>
+              </div>
+            </div>
+          </section>-->
+
+          <section class="rounded-2xl bg-white border border-neutral-200 shadow-sm">
+            <div class="p-5 sm:p-6">
+              <div class="flex items-center gap-2 text-sm text-neutral-600">
+                <i data-lucide="shield-check"></i>
+                <span>Your changes are stored locally.</span>
+              </div>
+            </div>
+          </section>
+        </aside>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="mx-auto max-w-7xl px-4 sm:px-6 pb-10">
+      <div class="mt-6 border-t border-neutral-200"></div>
+      <div class="pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-neutral-600">
+        <p>© <span id="year"></span> Ice Cream Co. All rights reserved.</p>
+        <div class="flex items-center gap-4">
+          <a href="#" class="hover:text-neutral-900 hover:underline underline-offset-4">Docs</a>
+          <a href="#" class="hover:text-neutral-900 hover:underline underline-offset-4">Support</a>
+          <a href="#" class="hover:text-neutral-900 hover:underline underline-offset-4">Privacy</a>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Success toast -->
+    <div id="saveSuccess" class="hidden fixed top-4 left-1/2 -translate-x-1/2 z-50">
+      <div class="inline-flex items-center gap-3 rounded-xl border border-emerald-200 bg-white px-4 py-3 shadow-lg ring-1 ring-emerald-200/40">
+        <i data-lucide="badge-check" class="text-emerald-600"></i>
+        <div>
+          <div class="text-sm font-semibold text-neutral-900">Product saved</div>
+          <div class="text-xs text-neutral-600">Your product has been added.</div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Icon render with 1.5 stroke width
+      document.addEventListener('DOMContentLoaded', () => {
+        if (window.lucide) {
+          lucide.createIcons({ attrs: { 'stroke-width': 1.5 } });
+        }
+      });
+
+      const currency = new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD' });
+      const STORAGE_KEY = 'icc_products';
+
+      const yearEl = document.getElementById('year');
+      yearEl.textContent = new Date().getFullYear();
+
+      const productsCountBadge = document.getElementById('productsCountBadge');
+      const savedCount = document.getElementById('savedCount');
+      const productsList = document.getElementById('productsList');
+
+      const unumEl = document.getElementById('unum');
+      const nameEl = document.getElementById('name');
+      const descEl = document.getElementById('description');
+      const priceEl = document.getElementById('price');
+      const imageEl = document.getElementById('image');
+
+      const unumError = document.getElementById('unumError');
+      const nameError = document.getElementById('nameError');
+      const priceError = document.getElementById('priceError');
+
+      const saveBtn = document.getElementById('saveProductBtn');
+      const resetBtn = document.getElementById('resetFormBtn');
+      const formNote = document.getElementById('formNote');
+
+      const previewImage = document.getElementById('previewImage');
+      const previewFallback = document.getElementById('previewImageFallback');
+      const previewName = document.getElementById('previewName');
+      const previewDesc = document.getElementById('previewDesc');
+      const previewPrice = document.getElementById('previewPrice');
+
+      const saveSuccess = document.getElementById('saveSuccess');
+
+      function loadProducts() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (raw) {
+            const arr = JSON.parse(raw);
+            if (Array.isArray(arr)) return arr.filter(Boolean);
+          }
+        } catch {}
+        return [];
+      }
+      function saveProducts(arr) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+      }
+
+      let products = loadProducts();
+
+      function updateCounts() {
+        const count = products.length;
+        productsCountBadge.textContent = count;
+        productsCountBadge.classList.toggle('hidden', count === 0);
+        savedCount.textContent = count > 0 ? `${count} item${count > 1 ? 's' : ''}` : '';
+      }
+
+      function renderList() {
+        productsList.innerHTML = '';
+        if (products.length === 0) {
+          productsList.innerHTML = `
+            <div class="flex flex-col items-center justify-center text-center rounded-xl border border-dashed border-neutral-200 p-10">
+              <i data-lucide="package-open" class="mb-2 text-neutral-400"></i>
+              <p class="text-sm text-neutral-600">No products yet. Add your first product.</p>
+            </div>
+          `;
+          if (window.lucide) lucide.createIcons({ attrs: { 'stroke-width': 1.5 }});
+          updateCounts();
+          return;
+        }
+
+        products.forEach((p) => {
+          const row = document.createElement('div');
+          row.className = 'flex items-center gap-3 rounded-xl border border-neutral-200 p-3';
+          row.innerHTML = `
+            <div class="relative h-14 w-14 overflow-hidden rounded-lg ring-1 ring-neutral-200 bg-neutral-100">
+              ${p.image ? `<img src="${p.image}" alt="${p.name}" class="h-full w-full object-cover" />` : ''}
+              <span class="absolute -right-1 -top-1 inline-flex items-center justify-center h-5 min-w-[20px] rounded-full bg-neutral-900 text-white text-[11px] font-semibold px-1.5 ring-2 ring-white">${p.unum}</span>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-start justify-between gap-3">
+                <div class="truncate">
+                  <div class="text-sm font-semibold truncate">${p.name}</div>
+                  <div class="text-xs text-neutral-600">${currency.format(Number(p.price) || 0)}</div>
+                </div>
+                <div class="text-xs text-neutral-600 whitespace-nowrap">ID: ${p.unum}</div>
+              </div>
+              ${p.description ? `<div class="mt-1 text-xs text-neutral-600 line-clamp-1">${p.description}</div>` : ''}
+              <div class="mt-2 flex items-center justify-end">
+                <button data-action="remove" data-id="${p.unum}" class="inline-flex items-center justify-center rounded-md border border-neutral-200 bg-white p-1.5 text-neutral-700 hover:bg-neutral-50 hover:border-neutral-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/40">
+                  <i data-lucide="trash-2"></i>
+                </button>
+              </div>
+            </div>
+          `;
+          productsList.appendChild(row);
+        });
+        if (window.lucide) lucide.createIcons({ attrs: { 'stroke-width': 1.5 }});
+        updateCounts();
+      }
+
+      function setPreview() {
+        const name = nameEl.value.trim() || 'Product name';
+        const desc = descEl.value.trim() || 'A short description will appear here.';
+        const price = priceEl.value ? Number(priceEl.value) : 0;
+        const img = imageEl.value.trim();
+
+        previewName.textContent = name;
+        previewDesc.textContent = desc;
+        previewPrice.textContent = currency.format(isFinite(price) ? price : 0);
+
+        if (img) {
+          previewImage.src = img;
+          previewImage.onload = () => {
+            previewImage.classList.remove('hidden');
+            previewFallback.classList.add('hidden');
+          };
+          previewImage.onerror = () => {
+            previewImage.classList.add('hidden');
+            previewFallback.classList.remove('hidden');
+          };
+        } else {
+          previewImage.classList.add('hidden');
+          previewFallback.classList.remove('hidden');
+        }
+      }
+
+      function validate() {
+        let valid = true;
+
+        const unum = unumEl.value.trim();
+        const name = nameEl.value.trim();
+        const price = Number(priceEl.value);
+
+        // Unum required and unique
+        const unumExists = products.some(p => String(p.unum) === unum);
+        if (!unum || unumExists) {
+          valid = false;
+          unumEl.classList.add('border-red-500');
+          unumEl.classList.remove('border-neutral-200');
+          unumError.textContent = !unum ? 'Enter a unique number.' : 'This unum already exists.';
+          unumError.classList.remove('hidden');
+        } else {
+          unumEl.classList.remove('border-red-500');
+          unumEl.classList.add('border-neutral-200');
+          unumError.classList.add('hidden');
+        }
+
+        // Name required
+        if (!name) {
+          valid = false;
+          nameEl.classList.add('border-red-500');
+          nameEl.classList.remove('border-neutral-200');
+          nameError.classList.remove('hidden');
+        } else {
+          nameEl.classList.remove('border-red-500');
+          nameEl.classList.add('border-neutral-200');
+          nameError.classList.add('hidden');
+        }
+
+        // Price required and >= 0
+        if (!(isFinite(price) && price >= 0)) {
+          valid = false;
+          priceEl.classList.add('border-red-500');
+          priceEl.classList.remove('border-neutral-200');
+          priceError.classList.remove('hidden');
+        } else {
+          priceEl.classList.remove('border-red-500');
+          priceEl.classList.add('border-neutral-200');
+          priceError.classList.add('hidden');
+        }
+
+        return valid;
+      }
+
+      function resetForm() {
+        unumEl.value = '';
+        nameEl.value = '';
+        descEl.value = '';
+        priceEl.value = '';
+        imageEl.value = '';
+
+        [unumEl, nameEl, priceEl].forEach(el => {
+          el.classList.remove('border-red-500');
+          el.classList.add('border-neutral-200');
+        });
+        unumError.classList.add('hidden');
+        nameError.classList.add('hidden');
+        priceError.classList.add('hidden');
+
+        formNote.textContent = '';
+        setPreview();
+      }
+
+      // Events
+      [nameEl, descEl, priceEl, imageEl].forEach(el => el.addEventListener('input', setPreview));
+
+      saveBtn.addEventListener('click', () => {
+        formNote.textContent = '';
+        if (!validate()) return;
+
+        const product = {
+          unum: unumEl.value.trim(),
+          name: nameEl.value.trim(),
+          description: descEl.value.trim(),
+          price: Number(priceEl.value),
+          image: imageEl.value.trim()
+        };
+
+        products.unshift(product);
+        saveProducts(products);
+        renderList();
+        resetForm();
+
+        // Toast
+        saveSuccess.classList.remove('hidden');
+        setTimeout(() => saveSuccess.classList.add('hidden'), 1800);
+      });
+
+      resetBtn.addEventListener('click', resetForm);
+
+      productsList.addEventListener('click', (e) => {
+        const btn = e.target.closest('button[data-action="remove"]');
+        if (!btn) return;
+        const id = String(btn.dataset.id);
+        products = products.filter(p => String(p.unum) !== id);
+        saveProducts(products);
+        renderList();
+      });
+
+      document.getElementById('openProductsBtn').addEventListener('click', () => {
+        setTimeout(() => {
+          document.getElementById('savedProducts')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 0);
+      });
+
+      // Initial
+      setPreview();
+      renderList();
+    </script>
+  </body>
+</html>

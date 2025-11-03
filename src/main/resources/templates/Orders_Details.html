@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Orders</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+  </head>
+  <body class="min-h-screen bg-neutral-50 text-neutral-900 antialiased">
+    <div class="w-full border-b border-neutral-200 bg-white/70 backdrop-blur">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6">
+        <div class="flex h-14 items-center justify-between">
+          <div class="flex items-center gap-2">
+            <a th:href="@{/catalog/list}" class="flex items-center gap-2 group">
+                <div class="flex h-8 w-8 items-center justify-center rounded-md bg-neutral-900 text-white ring-1 ring-neutral-900/10 shadow-sm">
+                  <span class="text-sm font-semibold tracking-tight">IC</span>
+                </div>
+                <div class="hidden sm:block">
+                  <span class="text-base font-semibold tracking-tight">Ice Cream Co.</span>
+                </div>
+              </a>
+          </div>
+          <div class="flex items-center gap-2">
+            <a th:href="@{/catalog/form}" class="inline-flex items-center gap-2 rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm font-medium text-neutral-700 shadow-sm hover:bg-neutral-50 hover:border-neutral-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/40">
+              <i data-lucide="plus"></i>
+              Add Products
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <main class="mx-auto max-w-7xl px-4 sm:px-6 py-8">
+      <div class="rounded-2xl bg-white border border-neutral-200 shadow-sm">
+        <div class="p-5 sm:p-6 border-b border-neutral-200">
+          <div class="flex items-center gap-2">
+            <i data-lucide="receipt" class="text-neutral-700"></i>
+            <h2 class="text-lg font-semibold tracking-tight">Orders</h2>
+          </div>
+        </div>
+        <div class="p-5 sm:p-6 overflow-x-auto">
+          <table class="min-w-full text-sm">
+            <thead>
+              <tr class="text-left text-neutral-600">
+                <th class="py-2 pr-4">Order ID</th>
+                <th class="py-2 pr-4">Customer</th>
+                <th class="py-2 pr-4">Email</th>
+                <th class="py-2 pr-4">Products</th>
+                <th class="py-2 pr-4">Full Address</th>
+                <th class="py-2 pr-4">Total</th>
+                <th class="py-2 pr-4">Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:if="${#lists.isEmpty(orders)}">
+                <td colspan="7" class="py-6 text-center text-neutral-500">No orders yet.</td>
+              </tr>
+              <tr th:each="o : ${orders}" class="border-t border-neutral-100">
+                <td class="py-2 pr-4 font-semibold" th:text="${o.orderID}">ORDERID</td>
+                <td class="py-2 pr-4" th:text="${o.firstName + ' ' + o.lastName}">Name</td>
+                <td class="py-2 pr-4" th:text="${o.email}">email@example.com</td>
+                <td class="py-2 pr-4 align-top">
+                  <ul class="list-disc pl-5 space-y-0.5" th:with="items=${orderItemsByOrderId[o.orderID]}">
+                    <li th:each="it : ${items}" th:text="${it.productName + ' × ' + it.qty}">Item × 1</li>
+                    <li th:if="${items == null || items.isEmpty()}" class="list-none text-neutral-500">No items</li>
+                  </ul>
+                </td>
+                <td class="py-2 pr-4 align-top">
+                  <div th:text="${o.address}">123 Street</div>
+                  <div th:if="${o.apartment}" class="text-xs text-neutral-600" th:text="${o.apartment}">Apt</div>
+                  <div class="text-xs text-neutral-700" th:text="${o.city + ', ' + o.state}">City, State</div>
+                  <div class="text-xs text-neutral-700" th:text="${o.country + ' - ' + o.pincode}">Country - 000000</div>
+                </td>
+                <td class="py-2 pr-4" th:text="${o.totalPrice != null ? #numbers.formatDecimal(o.totalPrice, 1, 'COMMA', 2, 'POINT') : '0.00'}">0.00</td>
+                <td class="py-2 pr-4" th:text="${o.orderDate}">date</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="p-5 sm:p-6 border-t border-neutral-200">
+          <a th:href="@{/catalog/form}" class="inline-flex items-center gap-2 rounded-lg bg-neutral-900 text-white px-4 py-2.5 text-sm font-medium shadow-sm hover:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-neutral-900/30">
+            <i data-lucide="arrow-left"></i>
+            Back to Add Products
+          </a>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        if (window.lucide) {
+          lucide.createIcons({ attrs: { 'stroke-width': 1.5 } });
+        }
+      });
+    </script>
+  </body>
+  </html>

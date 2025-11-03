@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Payment Processing</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+  </head>
+  <body class="min-h-screen bg-neutral-50 text-neutral-900 antialiased" style="font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;">
+    <div class="w-full border-b border-neutral-200 bg-white/70 backdrop-blur">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6">
+        <div class="flex h-14 items-center justify-between">
+          <a th:href="@{/catalog/list}" class="flex items-center gap-2 group">
+            <div class="flex h-8 w-8 items-center justify-center rounded-md bg-neutral-900 text-white ring-1 ring-neutral-900/10 shadow-sm">
+              <span class="text-sm font-semibold tracking-tight">IC</span>
+            </div>
+            <div class="hidden sm:block">
+              <span class="text-base font-semibold tracking-tight">Ice Cream Co.</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <main class="mx-auto max-w-2xl px-4 sm:px-6 py-12">
+      <div class="text-center mb-8">
+        <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-blue-50 ring-1 ring-blue-200">
+          <i data-lucide="credit-card" class="h-8 w-8 text-blue-600"></i>
+        </div>
+        <h1 class="text-2xl font-semibold tracking-tight">Processing Payment</h1>
+        <p class="mt-2 text-sm text-neutral-600">Please wait while we process your payment securely.</p>
+      </div>
+
+      <div class="rounded-2xl bg-white border border-neutral-200 shadow-sm p-6 mb-6">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-lg font-semibold">Order Summary</h2>
+          <span class="text-sm text-neutral-600" th:text="${order.orderID}">Order ID</span>
+        </div>
+        
+        <div class="space-y-3">
+          <div th:each="item : ${orderItems}" class="flex items-center justify-between py-2 border-b border-neutral-100">
+            <div class="flex items-center gap-3">
+              <div class="h-8 w-8 rounded-lg bg-neutral-100 flex items-center justify-center">
+                <i data-lucide="ice-cream" class="h-4 w-4 text-neutral-600"></i>
+              </div>
+              <div>
+                <div class="text-sm font-medium" th:text="${item.productName}">Product Name</div>
+                <div class="text-xs text-neutral-600" th:text="'Qty: ' + ${item.qty}">Qty: 1</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="pt-3 border-t border-neutral-200">
+            <div class="flex items-center justify-between text-lg font-semibold">
+              <span>Total Amount</span>
+              <span th:text="${order.totalPrice != null ? #numbers.formatDecimal(order.totalPrice, 1, 'COMMA', 2, 'POINT') : '0.00'}">₹0.00</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="rounded-2xl bg-white border border-neutral-200 shadow-sm p-6">
+        <div class="text-center">
+          <div class="inline-flex items-center gap-2 mb-4">
+            <div class="animate-spin rounded-full h-6 w-6 border-2 border-blue-600 border-t-transparent"></div>
+            <span class="text-sm font-medium text-blue-600">Processing your payment...</span>
+          </div>
+          
+          <form th:action="@{/payment/process/{orderId}(orderId=${orderId})}" method="post" id="paymentForm">
+            <input type="hidden" name="cardNumber" th:value="${order.cardNum}" />
+            <input type="hidden" name="cardName" th:value="${order.cardName}" />
+            <input type="hidden" name="cvv" th:value="${order.cvv}" />
+            <input type="hidden" name="expiry" th:value="${order.expiryDate}" />
+            
+            <button type="submit" class="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 text-white px-4 py-2.5 text-sm font-medium shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500/30">
+              <i data-lucide="shield-check"></i>
+              Complete Payment
+            </button>
+          </form>
+          
+          <p class="mt-4 text-xs text-neutral-500">
+            <i data-lucide="lock" class="inline h-3 w-3 mr-1"></i>
+            Your payment information is encrypted and secure
+          </p>
+        </div>
+      </div>
+
+      <div class="mt-6 text-center">
+        <a th:href="@{/catalog/list}" class="text-sm text-neutral-600 hover:text-neutral-900">Cancel and return to shopping</a>
+      </div>
+    </main>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        if (window.lucide) {
+          lucide.createIcons({ attrs: { 'stroke-width': 1.5 } });
+        }
+        
+        // Auto-submit form after 3 seconds for demo
+        setTimeout(() => {
+          document.getElementById('paymentForm').submit();
+        }, 3000);
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Complete Payment</title>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body>
+<h2>Redirecting to payment...</h2>
+<p>If you are not redirected automatically, click the button below.</p>
+
+<button id="rzp-button" style="display:none">Pay Now</button>
+
+<script th:inline="javascript">
+/*<![CDATA[*/
+var options = {
+    "key": /*[[${key}]]*/, // Razorpay Key ID
+    "amount": /*[[${amount}]]*/, // amount in paise
+    "currency": /*[[${currency}]]*/,
+    "name": /*[[${storeName}]]*/,
+    "description": "Order " + /*[[${orderId}]]*/,
+    "order_id": /*[[${razorpayOrderId}]]*/,
+    "handler": function (response){
+        // Send the payment response to your backend for verification
+        fetch('/payment/verify', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_signature: response.razorpay_signature,
+                orderId: /*[[${orderId}]]*/
+            })
+        }).then(function(res){ return res.json(); })
+          .then(function(data){
+            if (data.verified) {
+                window.location.href = '/catalog/order/success/' + encodeURIComponent(/*[[${orderId}]]*/);
+            } else {
+                alert('Payment verification failed. Please contact support.');
+                window.location.href = '/catalog/order/failure/' + encodeURIComponent(/*[[${orderId}]]*/);
+            }
+        }).catch(function(err){
+            console.error('Verify request failed', err);
+            alert('Error verifying payment. Please contact support.');
+            window.location.href = '/catalog/order/failure/' + encodeURIComponent(/*[[${orderId}]]*/);
+        });
+    },
+    "prefill": {
+        "name": /*[[${name}]]*/,
+        "email": /*[[${email}]]*/
+    },
+    "theme": {
+        "color": "#F37254"
+    }
+//    "method": {
+//        "upi": true
+//    },
+};
+
+var rzp = new Razorpay(options);
+
+// Auto-open checkout when page loads
+window.onload = function() {
+    try {
+        rzp.open();
+    } catch (e) {
+        // If auto-open fails, show a button so user can click to start checkout
+        document.getElementById('rzp-button').style.display = 'inline-block';
+        document.getElementById('rzp-button').addEventListener('click', function(e){
+            rzp.open();
+            e.preventDefault();
+        });
+    }
+};
+/*]]>*/
+</script>
+</body>
+</html>

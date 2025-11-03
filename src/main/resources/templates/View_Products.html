@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>Ice Cream Co. — Catalog</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+  </head>
+  <body class="min-h-screen bg-neutral-50 text-neutral-900 antialiased selection:bg-indigo-200/50 selection:text-indigo-900" style="font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;">
+    <!-- Top bar -->
+    <div class="w-full border-b border-neutral-200 bg-white/70 backdrop-blur">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6">
+        <div class="flex h-14 items-center justify-between">
+          <!-- Logo -->
+          <a href="#" class="flex items-center gap-2 group">
+            <div class="flex h-8 w-8 items-center justify-center rounded-md bg-neutral-900 text-white ring-1 ring-neutral-900/10 shadow-sm">
+              <span class="text-sm font-semibold tracking-tight">IC</span>
+            </div>
+            <div class="hidden sm:block">
+              <span class="text-base font-semibold tracking-tight">Ice Cream Co.</span>
+            </div>
+          </a>
+          <!-- Search -->
+          <div class="flex-1 px-4 max-w-xl">
+            <div class="relative">
+              <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400"></i>
+              <input id="searchInput" type="text" placeholder="Search flavors..."
+                     class="w-full rounded-lg border border-neutral-200 bg-white pl-10 pr-3 py-2.5 text-sm text-neutral-900 placeholder:text-neutral-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500"
+                     />
+            </div>
+          </div>
+          <!-- Actions -->
+          <div class="flex items-center gap-2">
+            <button id="openCartBtn" class="relative inline-flex items-center gap-2 rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm font-medium text-neutral-700 shadow-sm hover:bg-neutral-50 hover:border-neutral-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/40">
+              <i data-lucide="shopping-cart"></i>
+              <span class="hidden sm:inline">Cart</span>
+              <span id="cartCountBadge" class="absolute -right-2 -top-2 inline-flex h-5 min-w-[20px] items-center justify-center rounded-full bg-neutral-900 px-1.5 text-[11px] font-semibold leading-none text-white ring-2 ring-white">0</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Page header -->
+    <header class="mx-auto max-w-7xl px-4 sm:px-6 pt-8 sm:pt-10">
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h1 class="text-3xl sm:text-4xl font-semibold tracking-tight">Our Ice Creams</h1>
+          <p class="mt-2 text-sm sm:text-base text-neutral-600">Small-batch, ultra-creamy, made with real ingredients. Pick your pints.</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="sortBtn" class="inline-flex items-center gap-2 rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm font-medium text-neutral-700 shadow-sm hover:bg-neutral-50 hover:border-neutral-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/40">
+            <i data-lucide="arrow-up-down"></i>
+            Sort by price
+          </button>
+          <button id="clearBtn" class="inline-flex items-center gap-2 rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm font-medium text-neutral-700 shadow-sm hover:bg-neutral-50 hover:border-neutral-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/40">
+            <i data-lucide="eraser"></i>
+            Clear
+          </button>
+        </div>
+      </div>
+      <div class="mt-6 border-t border-neutral-200"></div>
+    </header>
+
+    <!-- Products Grid -->
+    <main class="mx-auto max-w-7xl px-4 sm:px-6 py-8">
+      <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <!-- Product Card Template Items -->
+        <!-- 1 -->
+        <div th:each="product : ${products}"
+            class="group rounded-2xl bg-white border border-neutral-200 shadow-sm overflow-hidden hover:shadow-md transition-shadow"
+            th:attr="data-product-id=${product.id},data-name=${product.name},data-price=${product.price}">
+          <div class="relative aspect-[4/3] overflow-hidden">
+            <img th:src="${product.image}" th:alt="${product.name}" class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+            <div class="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-white/90 px-2 py-1 text-[11px] font-medium text-neutral-700 ring-1 ring-neutral-200 backdrop-blur">473ml</div>
+          </div>
+          <div class="p-4">
+            <div class="flex items-start justify-between gap-3">
+              <div>
+                <h3 class="text-base font-semibold tracking-tight" th:text="${product.name}">Classic Vanilla</h3>
+                <p class="mt-1 text-sm text-neutral-600" th:text="${product.description}">Madagascar vanilla beans.</p>
+              </div>
+              <div class="shrink-0 text-right">
+                <div class="text-base font-semibold" th:text="'₹' + ${product.price}">$4.99</div>
+                <div class="text-xs text-neutral-500">per pint</div>
+              </div>
+            </div>
+            <div class="mt-4 flex items-center gap-2">
+              <button class="buy-now w-full inline-flex items-center justify-center gap-2 rounded-lg bg-neutral-900 text-white px-3 py-2 text-sm font-medium shadow-sm hover:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-neutral-900/30">
+                <i data-lucide="sparkles"></i>
+                Buy Now
+              </button>
+              <button class="add-to-cart inline-flex items-center justify-center gap-2 rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm font-medium text-neutral-700 shadow-sm hover:bg-neutral-50 hover:border-neutral-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/40"
+                    th:attr="data-id=${product.id},data-name=${product.name},data-price=${product.price}">
+                <i data-lucide="shopping-bag"></i>
+                Cart
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Cart Drawer -->
+    <div id="cartOverlay" class="fixed inset-0 z-40 hidden">
+      <div class="absolute inset-0 bg-black/30 backdrop-blur-sm"></div>
+    </div>
+
+    <aside id="cartDrawer" class="fixed right-0 top-0 z-50 h-full w-full max-w-md translate-x-full bg-white shadow-2xl ring-1 ring-neutral-200 transition-transform">
+      <div class="flex h-16 items-center justify-between px-4 sm:px-5 border-b border-neutral-200 bg-white/80 backdrop-blur">
+        <div class="flex items-center gap-2">
+          <i data-lucide="ice-cream" class="text-neutral-700"></i>
+          <h2 class="text-lg font-semibold tracking-tight">Your Cart</h2>
+        </div>
+        <button id="closeCartBtn" class="inline-flex items-center justify-center rounded-lg border border-neutral-200 bg-white p-2 text-neutral-700 hover:bg-neutral-50 hover:border-neutral-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/40">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <div class="flex h-[calc(100%-4rem)] flex-col">
+        <div id="cartItems" class="flex-1 overflow-auto px-4 sm:px-5 py-4 space-y-3">
+          <!-- Cart items will render here -->
+        </div>
+        <div class="border-t border-neutral-200 p-4 sm:p-5 bg-white">
+          <div class="flex items-center justify-between">
+            <span class="text-sm text-neutral-600">Subtotal</span>
+            <span id="cartSubtotal" class="text-base font-semibold text-neutral-900">₹0.00</span>
+          </div>
+            <a th:href="@{/catalog/cart-form}" class="btn">
+                <button id="checkoutBtn" class="mt-4 w-full inline-flex items-center justify-center gap-2 rounded-lg bg-neutral-900 text-white px-4 py-2.5 text-sm font-medium shadow-sm hover:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-neutral-900/30">
+                  <i data-lucide="credit-card"></i>
+                  Checkout
+                </button>
+            </a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Footer -->
+    <footer class="mx-auto max-w-7xl px-4 sm:px-6 pb-10">
+      <div class="mt-6 border-t border-neutral-200"></div>
+      <div class="pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-neutral-600">
+        <p>© <span id="year"></span> Ice Cream Co. All rights reserved.</p>
+        <div class="flex items-center gap-4">
+          <a href="#" class="hover:text-neutral-900 hover:underline underline-offset-4">Shipping</a>
+          <a href="#" class="hover:text-neutral-900 hover:underline underline-offset-4">Returns</a>
+          <a href="#" class="hover:text-neutral-900 hover:underline underline-offset-4">Contact</a>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      // Icon render with 1.5 stroke width
+      document.addEventListener('DOMContentLoaded', () => {
+        if (window.lucide) {
+          lucide.createIcons({ attrs: { 'stroke-width': 1.5 } });
+        }
+      });
+
+      const currency = new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD' });
+
+      const grid = document.getElementById('productsGrid');
+      const searchInput = document.getElementById('searchInput');
+      const sortBtn = document.getElementById('sortBtn');
+      const clearBtn = document.getElementById('clearBtn');
+      const openCartBtn = document.getElementById('openCartBtn');
+      const closeCartBtn = document.getElementById('closeCartBtn');
+      const cartDrawer = document.getElementById('cartDrawer');
+      const cartOverlay = document.getElementById('cartOverlay');
+      const cartItemsEl = document.getElementById('cartItems');
+      const cartSubtotalEl = document.getElementById('cartSubtotal');
+      const cartCountBadge = document.getElementById('cartCountBadge');
+      const checkoutBtn = document.getElementById('checkoutBtn');
+      const yearEl = document.getElementById('year');
+
+      yearEl.textContent = new Date().getFullYear();
+
+      let sortAsc = true;
+      const CART_KEY = 'icc_cart';
+      let cart = loadCart(); // { productId: { id, name, price, qty } }
+
+      function loadCart() {
+        try {
+          const raw = localStorage.getItem(CART_KEY);
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            const valid = {};
+            Object.values(parsed).forEach((item) => {
+              if (item && item.id) {
+                valid[item.id] = { id: String(item.id), name: String(item.name || ''), price: Number(item.price || 0), qty: Math.max(0, parseInt(item.qty || 0, 10)) };
+              }
+            });
+            return valid;
+          }
+        } catch {}
+        return {};
+      }
+
+      function saveCart() {
+        localStorage.setItem(CART_KEY, JSON.stringify(cart));
+      }
+
+      function openCart() {
+        cartOverlay.classList.remove('hidden');
+        cartDrawer.classList.remove('translate-x-full');
+      }
+
+      function closeCart() {
+        cartOverlay.classList.add('hidden');
+        cartDrawer.classList.add('translate-x-full');
+      }
+
+      openCartBtn.addEventListener('click', openCart);
+      closeCartBtn.addEventListener('click', closeCart);
+      cartOverlay.addEventListener('click', closeCart);
+
+      function getProductDataFromCard(card) {
+        return {
+          id: card.dataset.productId,
+          name: card.dataset.name,
+          price: Number(card.dataset.price),
+        };
+      }
+
+      function updateBadge() {
+        const count = Object.values(cart).reduce((sum, item) => sum + item.qty, 0);
+        cartCountBadge.textContent = count;
+        cartCountBadge.classList.toggle('hidden', count === 0);
+      }
+
+      function renderCart() {
+        cartItemsEl.innerHTML = '';
+        const items = Object.values(cart);
+        if (items.length === 0) {
+          cartItemsEl.innerHTML = `
+            <div class="flex flex-col items-center justify-center text-center rounded-xl border border-dashed border-neutral-200 p-10">
+              <i data-lucide="ice-cream" class="mb-2 text-neutral-400"></i>
+              <p class="text-sm text-neutral-600">Your cart is empty. Add something sweet!</p>
+            </div>
+          `;
+          if (window.lucide) lucide.createIcons({ attrs: { 'stroke-width': 1.5 }});
+        } else {
+          items.forEach((product) => {
+            const row = document.createElement('div');
+            row.className = 'flex items-center gap-3 rounded-xl border border-neutral-200 p-3';
+            row.innerHTML = `
+              <div class="h-14 w-14 overflow-hidden rounded-lg bg-neutral-100 ring-1 ring-neutral-200 flex items-center justify-center">
+                <i data-lucide="ice-cream" class="text-neutral-500"></i>
+              </div>
+              <div class="flex-1">
+                <div class="flex items-start justify-between gap-2">
+                  <div>
+                    <div class="text-sm font-semibold">${product.name}</div>
+                    <div class="text-xs text-neutral-600">${currency.format(product.price)} · pint</div>
+                  </div>
+                  <button data-action="remove" data-id="${product.id}" class="inline-flex items-center justify-center rounded-md border border-neutral-200 bg-white p-1.5 text-neutral-700 hover:bg-neutral-50 hover:border-neutral-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/40">
+                    <i data-lucide="trash-2"></i>
+                  </button>
+                </div>
+                <div class="mt-2 flex items-center justify-between">
+                  <div class="inline-flex items-center gap-2">
+                    <button data-action="decrement" data-id="${product.id}" class="inline-flex items-center justify-center rounded-md border border-neutral-200 bg-white p-1.5 text-neutral-700 hover:bg-neutral-50 hover:border-neutral-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/40">
+                      <i data-lucide="minus"></i>
+                    </button>
+                    <span class="min-w-[2ch] text-sm text-neutral-900 text-center">${product.qty}</span>
+                    <button data-action="increment" data-id="${product.id}" class="inline-flex items-center justify-center rounded-md border border-neutral-200 bg-white p-1.5 text-neutral-700 hover:bg-neutral-50 hover:border-neutral-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/40">
+                      <i data-lucide="plus"></i>
+                    </button>
+                  </div>
+                  <div class="text-sm font-semibold">${currency.format(product.price * product.qty)}</div>
+                </div>
+              </div>
+            `;
+            cartItemsEl.appendChild(row);
+          });
+          if (window.lucide) lucide.createIcons({ attrs: { 'stroke-width': 1.5 }});
+        }
+        const subtotal = Object.values(cart).reduce((sum, product) => sum + product.price * product.qty, 0);
+        cartSubtotalEl.textContent = currency.format(subtotal);
+        updateBadge();
+      }
+
+      function addToCart(product, qty = 1) {
+        if (!cart[product.id]) {
+          cart[product.id] = { ...product, qty: 0 };
+        }
+        cart[product.id].qty += qty;
+        saveCart();
+        renderCart();
+      }
+
+      function setQty(id, qty) {
+        if (!cart[id]) return;
+        cart[id].qty = Math.max(0, qty);
+        if (cart[id].qty === 0) delete cart[id];
+        saveCart();
+        renderCart();
+      }
+
+      cartItemsEl.addEventListener('click', (e) => {
+        const btn = e.target.closest('button[data-action]');
+        if (!btn) return;
+        const id = btn.dataset.id;
+        const action = btn.dataset.action;
+        if (action === 'remove') {
+          delete cart[id];
+        } else if (action === 'increment') {
+          if (cart[id]) cart[id].qty += 1;
+        } else if (action === 'decrement') {
+          if (cart[id]) {
+            cart[id].qty -= 1;
+            if (cart[id].qty <= 0) delete cart[id];
+          }
+        }
+        saveCart();
+        renderCart();
+      });
+
+      // Attach Buy/Add handlers
+      function attachProductHandlers(scope = document) {
+        scope.querySelectorAll('.add-to-cart').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const card = btn.closest('[data-product-id]');
+            const product = getProductDataFromCard(card);
+            addToCart(product, 1);
+          });
+        });
+        scope.querySelectorAll('.buy-now').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const card = btn.closest('[data-product-id]');
+            const product = getProductDataFromCard(card);
+            // Replace cart with this item and open drawer
+            cart = {};
+            addToCart(product, 1);
+            openCart();
+          });
+        });
+      }
+      attachProductHandlers(grid);
+
+      // Search filter
+      searchInput.addEventListener('input', () => {
+        const q = searchInput.value.trim().toLowerCase();
+        const cards = grid.querySelectorAll('[data-product-id]');
+        cards.forEach((card) => {
+          const name = card.dataset.name.toLowerCase();
+          card.classList.toggle('hidden', !name.includes(q));
+        });
+      });
+
+      // Sort by price
+      sortBtn.addEventListener('click', () => {
+        const cards = Array.from(grid.querySelectorAll('[data-product-id]'));
+        cards.sort((a, b) => {
+          const pa = parseFloat(a.dataset.price);
+          const pb = parseFloat(b.dataset.price);
+          return sortAsc ? pa - pb : pb - pa;
+        });
+        sortAsc = !sortAsc;
+        cards.forEach((c) => grid.appendChild(c));
+      });
+
+      // Clear search and reset sort visual
+      clearBtn.addEventListener('click', () => {
+        searchInput.value = '';
+        searchInput.dispatchEvent(new Event('input'));
+      });
+
+      // Checkout placeholder
+      checkoutBtn.addEventListener('click', () => {
+        // Simple feedback: Clear cart and close
+        cart = {};
+        renderCart();
+        closeCart();
+      });
+
+      // Initial render
+      renderCart();
+    </script>
+  </body>
+</html>
